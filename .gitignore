@@ -1,3 +1,7 @@
 
 
-data/
+data/*.jpg
+data/*.mat
+data/*.pcd
+data/*.xml
+data/*.png
