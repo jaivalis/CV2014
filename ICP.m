@@ -17,7 +17,7 @@ target_coords = target(:,1:3);
 %% find closest points
 build_params.algorithm = 'kdtree';
 build_params.trees = 8;
-% base_coords: d x n-matrix containing n d-dimensional points,
+% input_data: d x n-matrix containing n d-dimensional points,
 % doesn't work for me, need the nearest_neighbors.mex-file
 index = flann_build_index(base_coords', build_params);
 result = flann_search( index, target_coords, 1, struct('checks',128));
