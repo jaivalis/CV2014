@@ -1,6 +1,6 @@
 % we are supposed to use FLANN instead of vl_kdtree!
 % download at http://www.cs.ubc.ca/research/flann/
-addpath('C:\Users\T\Downloads\flann-1.8.4-src\flann-1.8.4-src\src\matlab')
+addpath('flann/src/matlab')
 base = readPcd('data\data\0000000000.pcd');
 target = readPcd('data\data\0000000001.pcd');
 t = 0;
