@@ -1,4 +1,4 @@
-addpath('\kdtree')
+addpath('.\kdtree')
 base   = readPcd('data\0000000000.pcd');
 target = readPcd('data\0000000001.pcd');
 
@@ -19,6 +19,9 @@ target_coords = target(:,1:3);
 tree = kdtree_build( base_coords );
 % input_data: d x n-matrix containing n d-dimensional points,
 idxs = zeros(size(target_coords, 1), neighbors);
+
+% TODO make this into function calculateRMS()
+RMS = 0;
 for i = 1 : size(target_coords, 1)
     nn = kdtree_k_nearest_neighbors(tree, target_coords(i,:), neighbors);
     RMS = RMS + sqrt(base_coords(nn,:) * target_coords(i,:)');
@@ -36,14 +39,18 @@ mu_target   = [sum(target_coords(:,1)) sum(target_coords(:,2)) sum(target_coords
 
 % Shift the center of mass of the base point cloud to the origin of the coordinate system.
 basePrime   = [ base_coords(idxs,1) - mu_base(1) base_coords(idxs,2) - mu_base(2) base_coords(idxs,3) - mu_base(3) ];
+iteration = 1;
 while 1
-    %% Phase 3: Applying Singular Value Decomposition
+    prev_RMS = RMS;
     
+    %% Phase 3: Applying Singular Value Decomposition
+    strcat('Iteration: ',num2str(iteration))
     % calculate A matrix
     
     % Shift the center of mass of the target point cloud to the origin of the coordinate system.
     targetPrime = [ target_coords(:,1) - mu_target(1) target_coords(:,2) - mu_target(2) target_coords(:,3) - mu_target(3) ];
-    A = basePrime * targetPrime';
+
+    A = basePrime' * targetPrime;
     
     % decompose A into U, Sigma and V
     [U, ~, V] = svd(A);
@@ -63,13 +70,22 @@ while 1
     T   = B_c - T_c * R;
     
     %% Phase 5: Calculate new average distances using the rotation and translation matrix
-    target_coords = R * target_coords + T;
+
+    temp = R * target_coords';
+    
+    target_coords = (R * target_coords')';
+    target_coords = [target_coords(:, 1) + T(1) target_coords(:, 2) + T(2) target_coords(:, 3) + T(3)];
     
     % calculate new RMS
-    RMS = -1;
+    RMS = calculateRMS(tree, idxs, base_coords, target_coords, neighbors);  
+    
+    iteration = iteration + 1;
+    
+    strcat('RMS: ', num2str(RMS), ' prevRMS: ', num2str(prevRMS), ' Difference: ', num2str(abs(prev_RMS - RMS)))
     
     % Loop until RMS remains unchanged
-    if prev_RMS == RMS
-        break
+    if abs(prev_RMS - RMS) < 0.0012
+        break;
     end
+    
 end
