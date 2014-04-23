@@ -25,14 +25,10 @@ for image = 1:99
     % input_data: d x n-matrix containing n d-dimensional points,
     idxs = zeros(size(target_coords, 1), neighbors);
 
-    % TODO make this into function calculateRMS()
-    RMS = 0;
-    for i = 1 : size(target_coords, 1)
-        nn = kdtree_k_nearest_neighbors(tree, target_coords(i,:), neighbors);
-        RMS = RMS + sqrt(base_coords(nn,:) * target_coords(i,:)');
-        idxs(i,:) = nn';
-    end
-    RMS = RMS / size(target_coords, 1);
+    
+    % calculate new RMS
+    [RMS,idxs] = calculateRMS(tree, idxs, base_coords, target_coords, neighbors);  
+
 
     %% Phase 2: Finding the geometric centroid of accepted matches
     size_base   = size(base_coords,1);
@@ -82,7 +78,7 @@ for image = 1:99
         target_coords = [target_coords(:, 1) + T(1) target_coords(:, 2) + T(2) target_coords(:, 3) + T(3)];
 
         % calculate new RMS
-        RMS = calculateRMS(tree, idxs, base_coords, target_coords, neighbors);  
+        [RMS,idxs] = calculateRMS(tree, idxs, base_coords, target_coords, neighbors);  
 
         iteration = iteration + 1;
 
@@ -95,20 +91,20 @@ for image = 1:99
 
     end
     
-    % plot base and target point cloud
-    figure;
-    subplot(1,2,1);
-    scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
-    subplot(1,2,2);
-    scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
-    figure;
-    scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
-    hold on;
-    scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
-    hold off;
+%     % plot base and target point cloud
+%     figure;
+%     subplot(1,2,1);
+%     scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
+%     subplot(1,2,2);
+%     scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
+%     figure;
+%     scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
+%     hold on;
+%     scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
+%     hold off;
     
     % merge base and target
     % TODO: find a better way
     base_coords = cat(1, base_coords, target_coords);
-    
+    break;
 end
