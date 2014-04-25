@@ -1,4 +1,4 @@
-addpath('.\kdtree')
+addpath('kdtree')
 base   = readPcd('data\0000000000.pcd');
 % filter out z-values greater than 2
 index_b = (base(:,3) < 2);
@@ -8,7 +8,7 @@ base_coords = base(:,1:3);
 
 for image = 1:99
     disp(strcat('Image: ', num2str(image)))
-    target = readPcd(strcat('data\000000000',num2str(image),'.pcd'));
+    target = readPcd( sprintf('data/%010d.pcd', 9) );
     % params
     neighbors = 1;
 
