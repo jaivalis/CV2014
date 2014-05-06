@@ -18,16 +18,8 @@ size(i_points1)
 size(matches)
 % % sample 8 points from matches
 % use the scores in order to get the 8 points instead of random sampling
+% score = squared Euclidean distance between the matches => useless
 matches = matches(:, randi(size(matches,2),1,8));
-size(matches)
-% matches = matches()
-% 
-% n = size(matches, 2); % ::= 8
-% 
-% % get A matrix
-% A = getA(i_points1, i_points2, matches);
-
-
 
 %% plot matches
 concat = cat(2, i1, i2); concat = concat / 255;
@@ -49,3 +41,16 @@ for i=1:length(destinationPoints),
   plot([originPoints(i, 1) destinationPoints(i, 1)], [originPoints(i, 2) destinationPoints(i, 2) ], 'b');
 end
 hold off
+
+%% Eight-point Algorithm
+% get A matrix
+A = getA(i_points1, i_points2, matches);
+% single Value Decomp. of A
+[U,D,V] = svd(A);
+V = V';
+% single 
+[~,f_ind] = find(V == min(min(V)));
+F = V(:, f_ind);
+% single Value Decomp. of F
+[U_f,D_f,V_f] = svd(F);
+D_f(min(D_f)) = 0;
