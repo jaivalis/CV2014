@@ -1,10 +1,10 @@
 function A = getA(points1, points2, matches)
 %GETA returns an n x 9 matrix A
     A = ones(8, 9);
-    X1      = points1(matches(1, :));
-    Y1      = points1(matches(2, :));
-    X1prime = points2(matches(1, :));
-    Y1prime = points2(matches(2, :));
+    X1      = points1(1, matches(1, :));
+    Y1      = points1(2, matches(2, :));
+    X1prime = points2(1, matches(1, :));
+    Y1prime = points2(2, matches(2, :));
     
     A(:, 1) = X1 .* X1prime;
     A(:, 2) = X1 .* Y1prime;
