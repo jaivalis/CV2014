@@ -46,8 +46,8 @@ for i = 1 : 1%16
     hold off
 
     %% Fundamental Matrix Estimation
-    F = eightPoint(i_points1, i_points2, matches);
-    %F = normalizedEightPoint(i_points1, i_points2, matches);
+    %F = eightPoint(i_points1, i_points2, matches);
+    F = normalizedEightPoint(i_points1, i_points2, matches);
     %F = normalizedEightPointRansac(i_points1, i_points2, matches);
 
     %% Chaining
