@@ -1,6 +1,5 @@
-function F = normalizedEightPoint(points1, points2, matches)
-%NORMALIZEDEIGHTPOINT Summary of this function goes here
-%   Detailed explanation goes here
+function F = normalizedEP(points1, points2, matches)
+%NORMALIZEDEP Summary of this function goes here
 
     % normalize
     [n_points1, T1] = normalizePoints(points1);

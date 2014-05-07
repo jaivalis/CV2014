@@ -1,19 +1,19 @@
 function F = eightPoint(i_points1, i_points2, matches)
-    % Eight-point Algorithm
-    % get A matrix
+%EIGHTPOINT Eight-point Algorithm
+    
     A = getA(i_points1, i_points2, matches);
     
     % single Value Decomp. of A
-    [U, D, V] = svd(A);%Find the SVD of A: A = UDV T
+    [~, ~, V] = svd(A);%Find the SVD of A: A = UDV T
     % The entries of F are the components of the column of V corresponding to the smallest singular value. 
-    [~,f_ind] = find(V == min(min(V)));
+    [~, f_ind] = find(V == min(min(V)));
     
-    F = V(:, f_ind);  
-    [F,padded] = vec2mat(F,3);%change F to matrix
+    F      = V(:, f_ind);  
+    [F, ~] = vec2mat(F, 3);%change F to matrix
     
-    F = F'%get the matrix transposed to set values to original F
+    F = F'; %get the matrix transposed to set values to original F
     % single Value Decomp. of F
-    [U_f, D_f, V_f] = svd(F);%Find the SVD of F: F = UfDfVf^T
+    [U_f, D_f, V_f] = svd(F); %Find the SVD of F: F = UfDfVf^T
     
     %Set the smallest singular value in the diagonal matrix Df to zero in
     %order to obtain the corrected matrix D'_f
@@ -23,10 +23,4 @@ function F = eightPoint(i_points1, i_points2, matches)
     
     %Recompute F: F = UfD'fVf^T
     F = U_f * D_f * V_f;
-    
-%     [D_f_ind_r, D_f_ind_c] = find(D_f == min(min(D_f)));
-%     
-%     D_f(D_f_ind_r, D_f_ind_c) = 0;
-%     
-%     F = U_f * D_f * V_f';
 end
