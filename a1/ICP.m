@@ -1,23 +1,28 @@
 addpath('kdtree')
+
+% params
+neighbors = 1;
+
 base   = readPcd( sprintf('data/%010d.pcd', 0) );
 % filter out z-values greater than 2
-index_b = (base(:,3) < 2);
-base = base(index_b,:);
+index_b = (base(:, 3) < 2);
+base    = base(index_b, :);
 % base with ony x,y,z values
 base_coords = base(:,1:3);
 
 for image = 1:99
     disp(strcat('Image: ', num2str(image)))
+%     base = readPcd( sprintf('data/%010d.pcd', image - 1) );
+%     index_b = (base(:,3) < 2);
+%     base = base(index_b,:);
+%     base_coords = base(:,1:3);
     target = readPcd( sprintf('data/%010d.pcd', image) );
-    % params
-    neighbors = 1;
 
     % filter out z-values greater than 2
     index_t = (target(:,3) < 2);
     target = target(index_t,:);
 
     %target with ony x,y,z values
-
     target_coords = target(:,1:3);
 
     %% find closest points
@@ -32,10 +37,6 @@ for image = 1:99
     size_base   = size(base_coords,1);
     mu_base   = [sum(base_coords(:,1)) sum(base_coords(:,2)) sum(base_coords(:,3))] / size_base;
 
-    size_target = size(target_coords,1);
-    mu_target   = [sum(target_coords(:,1)) sum(target_coords(:,2)) sum(target_coords(:,3)) ] / size_target;
-
-
     % Shift the center of mass of the base point cloud to the origin of the coordinate system.
     basePrime   = [ base_coords(idxs,1) - mu_base(1) base_coords(idxs,2) - mu_base(2) base_coords(idxs,3) - mu_base(3) ];
     iteration = 1;
@@ -47,6 +48,8 @@ for image = 1:99
         % calculate A matrix
 
         % Shift the center of mass of the target point cloud to the origin of the coordinate system.
+        size_target = size(target_coords,1);
+        mu_target   = [sum(target_coords(:,1)) sum(target_coords(:,2)) sum(target_coords(:,3)) ] / size_target;
         targetPrime = [ target_coords(:,1) - mu_target(1) target_coords(:,2) - mu_target(2) target_coords(:,3) - mu_target(3) ];
 
         A = basePrime' * targetPrime;
@@ -69,7 +72,6 @@ for image = 1:99
         T   = B_c - T_c * R;
 
         %% Phase 5: Calculate new average distances using the rotation and translation matrix
-
         temp = R * target_coords';
 
         target_coords = (R * target_coords')';
@@ -90,19 +92,18 @@ for image = 1:99
     end
     
     % plot base and target point cloud
-    figure;
-    subplot(1,2,1);
-    scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
-    subplot(1,2,2);
-    scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
-    figure;
-    scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
-    hold on;
-    scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
-    hold off;
+%     figure;
+%     subplot(1,2,1);
+%     scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
+%     subplot(1,2,2);
+%     scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
+%     figure;
+%     scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
+%     hold on;
+%     scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
+%     hold off;
     
     % merge base and target
-    % TODO: find a better way
-    base_coords = cat(1, base_coords, target_coords);
+    base_coords = merge(base_coords, target_coords);
     
 end
