@@ -6,4 +6,4 @@ data/*.pcd
 data/*.xml
 data/*.png
 
-readPcd.m
+a1/readPcd.m
