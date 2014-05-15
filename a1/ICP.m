@@ -1,5 +1,5 @@
 addpath('kdtree')
-base   = readPcd('data\0000000000.pcd');
+base   = readPcd( sprintf('data/%010d.pcd', 0) );
 % filter out z-values greater than 2
 index_b = (base(:,3) < 2);
 base = base(index_b,:);
@@ -8,7 +8,7 @@ base_coords = base(:,1:3);
 
 for image = 1:99
     disp(strcat('Image: ', num2str(image)))
-    target = readPcd( sprintf('data/%010d.pcd', 9) );
+    target = readPcd( sprintf('data/%010d.pcd', image) );
     % params
     neighbors = 1;
 
@@ -25,10 +25,8 @@ for image = 1:99
     % input_data: d x n-matrix containing n d-dimensional points,
     idxs = zeros(size(target_coords, 1), neighbors);
 
-    
     % calculate new RMS
-    [RMS,idxs] = calculateRMS(tree, idxs, base_coords, target_coords, neighbors);  
-
+    [RMS,idxs] = calculateRMS(tree, idxs, base_coords, target_coords, neighbors);
 
     %% Phase 2: Finding the geometric centroid of accepted matches
     size_base   = size(base_coords,1);
@@ -78,7 +76,7 @@ for image = 1:99
         target_coords = [target_coords(:, 1) + T(1) target_coords(:, 2) + T(2) target_coords(:, 3) + T(3)];
 
         % calculate new RMS
-        [RMS,idxs] = calculateRMS(tree, idxs, base_coords, target_coords, neighbors);  
+        RMS = calculateRMS(tree, idxs, base_coords, target_coords, neighbors);  
 
         iteration = iteration + 1;
 
@@ -91,20 +89,20 @@ for image = 1:99
 
     end
     
-%     % plot base and target point cloud
-%     figure;
-%     subplot(1,2,1);
-%     scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
-%     subplot(1,2,2);
-%     scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
-%     figure;
-%     scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
-%     hold on;
-%     scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
-%     hold off;
+    % plot base and target point cloud
+    figure;
+    subplot(1,2,1);
+    scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
+    subplot(1,2,2);
+    scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
+    figure;
+    scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
+    hold on;
+    scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
+    hold off;
     
     % merge base and target
     % TODO: find a better way
     base_coords = cat(1, base_coords, target_coords);
-    break;
+    
 end
