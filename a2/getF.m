@@ -1,25 +1,25 @@
-function F = getF( p1, p2, matches, type )
+function [F, sampl] = getF( p1, p2, matches, type, sampleSize )
 %GETF Returns the Fundamental matrix based on the type of method requested
 
-    m8 = matches(:, randi(size(matches, 2), 1, 8)); % not used in nepransac
+    sampl = matches(:, randi(size(matches, 2), 1, sampleSize)); % not used in nepransac
     
     if strcmp(type, 'EP')
-        F  = eightPoint(p1, p2, m8);
+        F  = eightPoint(p1, p2, sampl);
     elseif strcmp(type, 'nEP')
-        F  = normalizedEP(p1, p2, m8);
+        F  = normalizedEP(p1, p2, sampl);
     elseif strcmp(type, 'nEPRansac')
-        F = normalizedEPRansac(p1, p2, matches);
+        [F, sampl] = normalizedEPRansac(p1, p2, matches);
     end
 
      % verification of F
-    test1 = cat(2, p1(1:2,:)', ones(2000,1));
-    test2 = cat(2, p2(1:2,:)', ones(2000,1));
-    for match = 1 : size(m8, 2)
-        verif = test2(m8(2,match),:) * F * test1(m8(1,match),:)';
-        if verif ~= 0
-            verif
-        end
+    test1 = cat(2, p1(1:2,:)', ones(size(p1, 2),1));
+    test2 = cat(2, p2(1:2,:)', ones(size(p2, 2),1));
+    avgError = 0;
+    for match = 1:size(sampl, 2)
+        verif = test2(sampl(2,match),:) * F * test1(sampl(1,match),:)';
+        avgError = avgError + abs(verif);
     end
-    
+    disp(strcat('Average error: ', num2str(avgError / size(sampl, 2))));
+
 end
 

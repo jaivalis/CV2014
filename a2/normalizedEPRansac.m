@@ -1,10 +1,10 @@
-function F = normalizedEPRansac(P1, P2, matches)
+function [F, sampl] = normalizedEPRansac(P1, P2, matches)
 %NORMALIZEDEPRANSAC See Section 1.3
     
     most_inliers = 0;
     improvementSteps = 0;
     
-    while improvementSteps < 10
+    while most_inliers < size(matches, 2) / 6
         matchesSample = matches(:, randi(size(matches,2),1,8));
         
         F_candidate = normalizedEP(P1, P2, matchesSample);
@@ -24,6 +24,7 @@ function F = normalizedEPRansac(P1, P2, matches)
             F                = F_candidate;
             most_inliers     = inliers;
             improvementSteps = improvementSteps + 1;
+            sampl            = matchesSample;
         end
         
     end
