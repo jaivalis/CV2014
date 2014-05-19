@@ -9,7 +9,7 @@ sampleSize = 8;
 
 pointView  = []; % images x points
 pointsSeen = []; % points x 2 (xy)
-for i = 1 : 1%16
+for i = 1 : 16
     i1 = single(rgb2gray(imread(strcat('TeddyBear/obj02_00', num2str(i),'.png'))));
     if i < 16
         i2 = single(rgb2gray(imread(strcat('TeddyBear/obj02_00', num2str(i + 1),'.png'))));
@@ -58,17 +58,29 @@ for i = 1 : 1%16
     % other image contains that point, mark this matching on your point-view
     % matrix using the previously defined point column. Do not introduce a new
     % column.
-%     for k = 1:size(matches, 2)
-%         if ~sum(ismember(pointsSeen', [i_points2(1, matches(2,k)) i_points2(2, matches(2,k))]', 'rows'))
-%             % add a new column for any newly introduced point
-%             pointsSeen = cat(2, pointsSeen, i_points2(1, matches(2,k)));
-%             pointView  = cat(2, pointView, zeros(16, 1));
-%         else 
-%             % mark the point of points that have already been seen
-%             % find point in pointsSeen
-%             [c,r] = find(pointsSeen == [i_points2(1, matches(2,k)) i_points2(2, matches(2,k))]);
-%             % mark point in pointView
-%             pointView(c, i) = 1;
-%         end
-%     end
+    for k = 1:size(matches, 2)
+        coord = [i_points2(1, matches(2,k)) i_points2(2, matches(2,k))];
+        if isempty(pointsSeen)
+            pointsSeen = [pointsSeen; coord];
+            pointView  = cat(2, pointView, zeros(16, 1));
+            pointView(1, 1) = 1;
+            continue;
+        end
+        
+        if ~sum(ismember(coord, pointsSeen, 'rows'))
+            % add a new column for any newly introduced point
+            pointsSeen = [pointsSeen; coord];
+            pointView  = cat(2, pointView, zeros(16, 1));
+            pointView(i, size(pointView,2)) = 1;
+        else
+            % mark the point of points that have already been seen
+            % find point in pointsSeen
+            size(pointsSeen)
+            
+            [c,r] = ismember(coord, pointsSeen, 'rows');
+            % mark point in pointView
+            pointView(i, r) = 1;
+        end
+    end
+    imshow(pointView)
 end
