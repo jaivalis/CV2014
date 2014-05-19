@@ -1,29 +1,16 @@
 addpath('kdtree')
 
 % params
-neighbors = 1;
+neighbors  = 1;
+type       = 'random';
+sampleSize = 10000;
+% \params
 
-base   = readPcd( sprintf('data/%010d.pcd', 0) );
-% filter out z-values greater than 2
-index_b = (base(:, 3) < 2);
-base    = base(index_b, :);
-% base with ony x,y,z values
-base_coords = base(:,1:3);
-
+base   = getPcd( 0, type, sampleSize );
 for image = 1:99
     disp(strcat('Image: ', num2str(image)))
-%     base = readPcd( sprintf('data/%010d.pcd', image - 1) );
-%     index_b = (base(:,3) < 2);
-%     base = base(index_b,:);
-%     base_coords = base(:,1:3);
-    target = readPcd( sprintf('data/%010d.pcd', image) );
-
-    % filter out z-values greater than 2
-    index_t = (target(:,3) < 2);
-    target = target(index_t,:);
-
-    %target with ony x,y,z values
-    target_coords = target(:,1:3);
+    
+    target = getPcd( image, type, sampleSize );
 
     %% find closest points
     tree = kdtree_build( base_coords );
@@ -31,15 +18,16 @@ for image = 1:99
     idxs = zeros(size(target_coords, 1), neighbors);
 
     % calculate new RMS
-    [RMS,idxs] = calculateRMS(tree, idxs, base_coords, target_coords, neighbors);
+    [RMS, idxs] = calculateRMS(tree, idxs, base_coords, target_coords, neighbors);
 
     %% Phase 2: Finding the geometric centroid of accepted matches
     size_base   = size(base_coords,1);
-    mu_base   = [sum(base_coords(:,1)) sum(base_coords(:,2)) sum(base_coords(:,3))] / size_base;
+    mu_base     = [sum(base_coords(:,1)) sum(base_coords(:,2)) sum(base_coords(:,3))] / size_base;
 
     % Shift the center of mass of the base point cloud to the origin of the coordinate system.
     basePrime   = [ base_coords(idxs,1) - mu_base(1) base_coords(idxs,2) - mu_base(2) base_coords(idxs,3) - mu_base(3) ];
-    iteration = 1;
+    
+    iteration   = 1;
     while 1
         prev_RMS = RMS;
 
@@ -61,8 +49,6 @@ for image = 1:99
         T = zeros(1, 3);
         R = eye(3,3);
 
-        prevRMS = RMS;
-
         %% Phase 4 finding out translation and rotation based on SVD result
         R = U * V';
 
@@ -75,20 +61,22 @@ for image = 1:99
         temp = R * target_coords';
 
         target_coords = (R * target_coords')';
-        target_coords = [target_coords(:, 1) + T(1) target_coords(:, 2) + T(2) target_coords(:, 3) + T(3)];
+        target_coords = [target_coords(:, 1) + T(1) ...
+                         target_coords(:, 2) + T(2) ...
+                         target_coords(:, 3) + T(3)];
 
         % calculate new RMS
-        RMS = calculateRMS(tree, idxs, base_coords, target_coords, neighbors);  
+        [RMS, idxs] = calculateRMS(tree, idxs, base_coords, target_coords, neighbors);  
 
         iteration = iteration + 1;
 
-        disp(strcat('RMS: ', num2str(RMS), ' prevRMS: ', num2str(prevRMS), ' Difference: ', num2str(abs(prev_RMS - RMS))))
+        disp(strcat('RMS:', num2str(RMS), ' prevRMS:', num2str(prevRMS),...
+                    ' Difference:', num2str(abs(prev_RMS - RMS))))
 
         % Loop until RMS remains unchanged
         if abs(prev_RMS - RMS) < 0.0012
             break;
         end
-
     end
     
     % plot base and target point cloud
@@ -97,13 +85,13 @@ for image = 1:99
 %     scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
 %     subplot(1,2,2);
 %     scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
-%     figure;
-%     scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
-%     hold on;
-%     scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
-%     hold off;
+    figure;
+    scatter3(base_coords(1:100:end,1),base_coords(1:100:end,2),base_coords(1:100:end,3),'r')
+    hold on;
+    scatter3(target_coords(1:100:end,1),target_coords(1:100:end,2),target_coords(1:100:end,3),'b')
+    hold off;
     
     % merge base and target
-    base_coords = merge(base_coords, target_coords);
+    base_coords = merge(base_coords, target_coords, idxs);
     
 end

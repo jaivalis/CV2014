@@ -1,0 +1,78 @@
+\documentclass[11pt]{article}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{graphicx}
+
+
+\title{
+	\textbf{Computer Vision AI - Final Project Report}
+}
+
+\author{Tobias Stahl \\ 10528199 \and Ioannis-Giounous Aivalis \\ 10524851  \and Spyros Michaelides}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+This is the report for the assignments of the course: Computer Vision AI. The goal of the assignments has been 3D object reconstruction. This report is split into three parts, each of which consists of our experiment results and implementation details of the three separate assignments.
+  
+\section{Assignment 1}
+For this assignment we reproduced the findings of Besl and McKay \cite{besl}. In this implementation the authors make use of the Iterative Closest Point (ICP) algorithm in order to dind a spacial transformation for consecutive pairs of point-clouds. The goal of this process is to find the optimal transformation between two point clouds such that the distance (Root Mean Square (RMS)) between the two clouds is minimized.
+
+\subsection{Data}
+\label{ICPDataSection}
+The data provided for the 3D reconstruction is 
+
+\subsection{Implementation}
+\label{ICPImplementation}
+Our replication of the ICP algorithms implementation will be presented in this subsection of the report. An overview of the algorithms pseudocode is presented in \ref{ICPpseudocode}
+
+% TODO: Insert algorithm here
+
+% TODO: Write a short (1-2 paragraphs) explanation (coherent to our implementation) of the algorithm.
+
+Here we discussed the general intuition of the algorithm. Further we will present some small variations of our system in terms of the points of the point clouds that will be used. More specifically we have three different scenarios for sampling (or not) from the set of point clouds which will show variations in the factors of accuracy, runtime, and tolerance to noise.
+
+\subsubsection{No subsampling}
+In this variation of the system we will make use of all the points from the point clouds. We are expecting the system to be significantly slower than the others. However we expect it to be more tolerant to noise, as now the noise is less influential over the whole corpus of points in each point cloud.
+
+\subsubsection{Uniform subsampling}
+As mentioned in Section \ref{ICPDataSection} the point clouds of the 3D model we are trying to reconstruct consist of XXX points. Here we will try to reduce the computational cost of performing the ICP algorithm by uniformly sampling XXX of those points. 
+
+This approach is expected to increase the overall speed of the process with the cost of somewhat reducing the accuracy of the reconstructed model. 
+
+\subsubsection{Random subsampling}
+
+\subsection{Results}
+In this section we present the results obtained by our different sampling methods used. The aggregated runtimes of the algorithm per sampling are shown in Table \ref{samplingResults}.
+
+%TODO: Table samplingResults
+
+Now it becomes clear that...
+%TODO: Discussion on table paragraph(s)
+
+%TODO: Table containing pictures: Model per sampling (3 models x 2 viewing angles) ICPmodelResults
+The produced result can be seen in Table \ref{ICPmodelResults}. 
+%TODO: Discussion on accuracy of models paragraph(s)
+
+\subsection{ICP Algorithm drawbacks}
+The ICP algorithm seems to perform well for the given data. The produced 3D model is a pretty accurate representation of the depicted person. This algorithm seems to perform really well given that the data provided is relatively raw. No additional features were extracted and still the result is very satisfactory. In this section however we will focus on the disadvantages of this algorithm.
+
+A characteristic of this algorithm is that it is slow. As presented in Section \ref{ICPImplementation} and more specifically on the second step of the algorithms pseudocode we see that we need to use a brute-force approach in order to obtain the closest points for each points. Even though this task is presented as simply one step in the pseudocode, the complexity of it is $\mathcal{O}(n^2)$. Given that the task at hand is referring to points in point clouds, it is easy to see how this complexity is a prohibitive constraint to building a fast system. Even with our workaround by using a k-dimentional tree, this step is very resource hungry.
+
+Additionally, convergence doesn't seem to be guaranteed. Removal of outlier points might help in this direction however local minima of the RMS metric can prevent it from eventually converging.
+
+\subsection{Efficiency/Accuracy improvement of the ICP Algorithm}
+
+%TODO
+
+\section{Assignment 2}
+
+\section{Assignment 3}
+
+\section{Conclusion}
+
+\section{References}
+
+\end{document}
