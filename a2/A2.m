@@ -1,5 +1,11 @@
 clear all
 addpath('../a1/kdtree')
+
+% params
+EPTypes = {'EP', 'nEP', 'nEPRansac'};
+EPType  = EPTypes(1);
+% \params
+
 pointView  = []; % images x points
 pointsSeen = []; % points x 2 (xy)
 for i = 1 : 1%16
@@ -21,7 +27,7 @@ for i = 1 : 1%16
     % Sample 8 points from matches
     matches8 = matches(:, randi(size(matches,2),1,8));
 
-    %% plot matches
+    %% plot matches [TODO: can be removed/commented]
     concat = cat(2, i1, i2); concat = concat / 255;
     figure;  imshow(concat, 'InitialMagnification', 50);
     hold on
@@ -38,37 +44,32 @@ for i = 1 : 1%16
     plot(destinationPoints(1:end, 1), destinationPoints(1:end, 2), 'go');
 
     for j = 1:length(destinationPoints)
-      plot([originPoints(j, 1) destinationPoints(j, 1)],...
-          [originPoints(j, 2) destinationPoints(j, 2) ], 'b');
+      plot([originPoints(j, 1) destinationPoints(j, 1)], ...
+           [originPoints(j, 2) destinationPoints(j, 2)], 'b');
     end
     hold off
 
     %% Fundamental Matrix Estimation
-    %F = eightPoint(i_points1, i_points2, matches8);
-    %F = normalizedEP(i_points1, i_points2, matches8);
-    F = normalizedEPRansac(i_points1, i_points2, matches);
-
+    F = getF(i_points1, i_points2, matches, EPType);
+    
     %% Chaining
-
     % Start from any two consecutive image matches. Add a new column to
     % point-view matrix for each newly introduced point.
     % If a point which is already introduced in the point-view matrix and an-
     % other image contains that point, mark this matching on your point-view
     % matrix using the previously defined point column. Do not introduce a new
     % column.
-
-    
-    for k = 1:size(matches, 2)
-        if ~sum(ismember(pointsSeen', [i_points2(1, matches(2,k)) i_points2(2, matches(2,k))]', 'rows'))
-            % add a new column for any newly introduced point
-            pointsSeen = cat(2, pointsSeen, i_points2(1, matches(2,k)));
-            pointView  = cat(2, pointView, zeros(16, 1));
-        else 
-            % mark the point of points that have already been seen
-            % find point in pointsSeen
-            [c,r] = find(pointsSeen == [i_points2(1, matches(2,k)) i_points2(2, matches(2,k))]);
-            % mark point in pointView
-            pointView(c, i) = 1;
-        end
-    end
+%     for k = 1:size(matches, 2)
+%         if ~sum(ismember(pointsSeen', [i_points2(1, matches(2,k)) i_points2(2, matches(2,k))]', 'rows'))
+%             % add a new column for any newly introduced point
+%             pointsSeen = cat(2, pointsSeen, i_points2(1, matches(2,k)));
+%             pointView  = cat(2, pointView, zeros(16, 1));
+%         else 
+%             % mark the point of points that have already been seen
+%             % find point in pointsSeen
+%             [c,r] = find(pointsSeen == [i_points2(1, matches(2,k)) i_points2(2, matches(2,k))]);
+%             % mark point in pointView
+%             pointView(c, i) = 1;
+%         end
+%     end
 end

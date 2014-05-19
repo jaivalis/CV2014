@@ -5,7 +5,7 @@ addpath('kdtree')
 neighbors  = 1;
 type       = 'random';
 sampleSize = 10000;
-stepSize   = 10;
+stepSize   = 1;
 % \params
 
 base   = getPcd( 0, type, sampleSize );
