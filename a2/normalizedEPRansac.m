@@ -1,10 +1,10 @@
-function [F , matchesSample] = normalizedEPRansac(P1, P2, matches)
+function F = normalizedEPRansac(P1, P2, matches)
 %NORMALIZEDEPRANSAC See Section 1.3
     
     most_inliers = 0;
     improvementSteps = 0;
     
-    while most_inliers < matches(size(matches,2)) / 6
+    while improvementSteps < 10
         matchesSample = matches(:, randi(size(matches,2),1,8));
         
         F_candidate = normalizedEP(P1, P2, matchesSample);
@@ -15,7 +15,7 @@ function [F , matchesSample] = normalizedEPRansac(P1, P2, matches)
             p2 = P2(1:2, i);
             
             d = sampsonDistance(p1, p2, F_candidate);
-            if d < 150
+            if d < 200
                 inliers = inliers + 1;
             end
         end
@@ -25,6 +25,7 @@ function [F , matchesSample] = normalizedEPRansac(P1, P2, matches)
             most_inliers     = inliers;
             improvementSteps = improvementSteps + 1;
         end
+        
     end
     
 end

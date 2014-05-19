@@ -14,8 +14,7 @@ function [norm_points, T] = normalizePoints( points )
     for i = 1 : size(points,2)
         norm_points(:,i) = T * [points(1, i); points(2, i); 1];
     end
-    
-    %assert(mean(norm_points,2) == [0;0;1],...
-    %    'normalizePoints(): mean is not zero');
+%     assert(mean(norm_points,2) == [0;0;1],...
+%        'normalizePoints(): mean is not zero');
 end
 

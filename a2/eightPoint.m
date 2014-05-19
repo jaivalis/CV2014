@@ -3,10 +3,9 @@ function F = eightPoint(i_points1, i_points2, matches)
     
     A = getA(i_points1, i_points2, matches);
     
-    % SVD of A
-    [~, ~, V] = svd(A);
-    % The entries of F are the components of the column of V corresponding 
-    % to the smallest singular value. 
+    % single Value Decomp. of A
+    [~, ~, V] = svd(A);%Find the SVD of A: A = UDV T
+    % The entries of F are the components of the column of V corresponding to the smallest singular value. 
     [~, f_ind] = find(V == min(min(V)));
     
     F      = V(:, f_ind);  
