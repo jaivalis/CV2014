@@ -10,7 +10,8 @@ function [F, sampl] = normalizedEPRansac(P1, P2, matches)
         F_candidate = normalizedEP(P1, P2, matchesSample);
         inliers = 0;
         
-        for i = 1:size( P1, 2 )
+        limit = min(size(P1, 2), size(P2, 2));
+        for i = 1:limit
             p1 = P1(1:2, i);
             p2 = P2(1:2, i);
             
