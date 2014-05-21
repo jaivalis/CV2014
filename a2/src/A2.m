@@ -13,6 +13,7 @@ plotF      = false;
 
 pointView  = []; % images x points
 pointsSeen = []; % points x 2 (xy)
+offset = 0;
 for i = 1 : 16
     i1 = single(rgb2gray(imread(sprintf(dataset, i))));
     if i == 16
@@ -31,7 +32,7 @@ for i = 1 : 16
     %% Fundamental Matrix Estimation
     [F, sampl] = getF(i_points1, i_points2, matches, EPType, sampleSize);
     
-    %% plot matches [TODO: can be removed/commented]
+    %% Plot matches
     if plotF
         concat = cat(2, i1, i2); concat = concat / 255;
         figure;  imshow(concat, 'InitialMagnification', 20);
@@ -61,34 +62,23 @@ for i = 1 : 16
     % other image contains that point, mark this matching on your point-view
     % matrix using the previously defined point column. Do not introduce a new
     % column.
-    imagePointsSeen = [];
-    for k = 1:size(matches, 2)
-        coord = [i_points2(1, matches(2,k)) i_points2(2, matches(2,k))];
-        if isempty(pointsSeen)
-            pointsSeen = [pointsSeen; coord];
-            pointView  = cat(2, pointView, zeros(16, 1));
-            pointView(1, 1) = 1;
-            continue;
-        end
-        
-        if ~sum(ismember(coord, pointsSeen, 'rows'))
-            % add a new column for any newly introduced point
-            pointsSeen = [pointsSeen; coord];
-            pointView  = cat(2, pointView, zeros(16, 1));
-            pointView(i, size(pointView,2)) = 1;
-        else
-            inSameImage = ismember(coord, imagePointsSeen, 'rows');
-            if sum(inSameImage)
-                continue;
+    if isempty(pointView)
+        pointView = zeros(16, size(matches, 2));
+        previousRight = matches(1, :);
+    else
+        for k = 1:size(matches, 2)
+            Lmatch = matches(1, k);
+
+            if ismember(Lmatch, previousRight)
+                % not newly introduced - mark point in pointView
+                index = find(previousRight == Lmatch);
+                pointView(i-1, index + offset) = 1;
+            else
+                % newly introduced point
+                pointView = [ pointView zeros(16,1) ];
             end
-            % mark the point of points that have already been seen
-            % find point in pointsSeen
-            size(pointsSeen)
-            
-            [c,r] = ismember(coord, pointsSeen, 'rows');
-            % mark point in pointView
-            pointView(i, r) = 1;
         end
-        imagePointsSeen = [imagePointsSeen; coord];
+        previousRight = matches(2, :);
+        offset = offset + size(matches, 2);
     end
 end
