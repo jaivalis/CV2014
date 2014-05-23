@@ -12,9 +12,9 @@ plotF      = false;
 % \params
 
 pointView  = []; % images x points
-pointsSeen = []; % points x 2 (xy)
+coordinates = [];% x,y-coordinate of points in pointView
 offset = 0;
-
+bla = 0;
 lim = 16;
 if strcmp(dataset, 'House/frame%08d.png')
     lim = 49;
@@ -69,22 +69,39 @@ for i = 1 : lim
     % column.
     if isempty(pointView)
         % first iteration
-        pointView = zeros(lim, size(matches, 2));
-        previousRight = matches(1, :);
+        pointView = zeros(2*lim, size(matches,2));
+        coordinates = zeros(2*lim, size(matches,2));
+        pointView(1:2, :) = matches;
+        coordinates(1:2, :) = i_points1(1:2, matches(1,:));
     else
         for k = 1:size(matches, 2)
-            Lmatch = matches(2, k);
-
-            if ismember(Lmatch, previousRight)
+            Lmatch = matches(1, k);
+            Rmatch = matches(2, k);
+            index = i + 2 * bla - 1;
+            if ismember(Lmatch, pointView(index, :)', 'rows')
                 % not newly introduced - mark point in pointView
-                index = find(previousRight == Lmatch);
-                pointView(i-1, index + offset) = 1;
+                [~, r] = ismember(Lmatch, pointView(index, :)', 'rows');
+                pointView(index + 1, r) = Lmatch;
+                pointView(index + 2, r) = Rmatch;
+                % save coordinates of point
+                coordinates(index + 1, r) = i_points1(1, Lmatch);
+                coordinates(index + 2, r) = i_points1(2, Lmatch);
             else
                 % newly introduced point
-                pointView = [ pointView zeros(lim,1) ];
+                pointView = [ pointView zeros(2*lim,1) ];
+                pointView(index + 1, size(pointView, 2)) = Lmatch;
+                pointView(index + 2, size(pointView, 2)) = Rmatch;
+                % save coordinates of point
+                coordinates(index + 1, size(pointView, 2)) = i_points1(1, Lmatch);
+                coordinates(index + 2, size(pointView, 2)) = i_points1(2, Lmatch);
             end
         end
-        previousRight = matches(2, :);
-        offset = offset + size(matches, 2);
     end
+    bla = bla + 0.5;
 end
+% i saved all the indexes of the matches, so convert indexes to 1
+pointView(pointView>1) = 1;
+% i saved Lmatch and Rmatch, so delete every second line now
+pointView(1:2:end, :) = [];
+
+imshow(pointView)
