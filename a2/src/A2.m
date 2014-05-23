@@ -5,26 +5,26 @@ addpath('../a1/kdtree')
 EPTypes    = {'EP', 'nEP', 'nEPRansac'};
 Datasets   = {'TeddyBear/obj02_%03d.png', 'House/frame%08d.png'};
 
-dataset    = Datasets{2};
+dataset    = Datasets{1};
 EPType     = EPTypes(3);
 sampleSize = 8;
 plotF      = false;
 % \params
 
-pointView  = []; % images x points
-coordinates = [];% x,y-coordinate of points in pointView
+pointView   = []; % images x points
+coordinates = []; % x,y-coordinate of points in pointView
 offset = 0;
-bla = 0;
-lim = 16;
+p      = 0;
+lim    = 16;
 if strcmp(dataset, 'House/frame%08d.png')
     lim = 49;
 end
 for i = 1 : lim
-    i1 = single((imread(sprintf(dataset, i))));
+    i1 = readImage(dataset, i);
     if i == lim
-        i2 = single((imread(sprintf(dataset, 1))));
+        i2 = readImage(dataset, 1);
     else
-        i2 = single((imread(sprintf(dataset, i+1))));
+        i2 = readImage(dataset, i+1);
     end
 
     %sample interest points for non background points
@@ -69,7 +69,7 @@ for i = 1 : lim
     % column.
     if isempty(pointView)
         % first iteration
-        pointView = zeros(2*lim, size(matches,2));
+        pointView   = zeros(2*lim, size(matches,2));
         coordinates = zeros(2*lim, size(matches,2));
         pointView(1:2, :) = matches;
         coordinates(1:2, :) = i_points1(1:2, matches(1,:));
@@ -77,7 +77,7 @@ for i = 1 : lim
         for k = 1:size(matches, 2)
             Lmatch = matches(1, k);
             Rmatch = matches(2, k);
-            index = i + 2 * bla - 1;
+            index = i + 2 * p - 1;
             if ismember(Lmatch, pointView(index, :)', 'rows')
                 % not newly introduced - mark point in pointView
                 [~, r] = ismember(Lmatch, pointView(index, :)', 'rows');
@@ -97,11 +97,20 @@ for i = 1 : lim
             end
         end
     end
-    bla = bla + 0.5;
+    p = p + .5;
 end
 % i saved all the indexes of the matches, so convert indexes to 1
 pointView(pointView>1) = 1;
 % i saved Lmatch and Rmatch, so delete every second line now
-pointView(1:2:end, :) = [];
+pointView(1:2:end, :)  = [];
+
+%% Save the pointView to file
+if strcmp(dataset, 'TeddyBear/obj02_%03d.png')
+    save(strcat(pwd, '/a2/output/teddy.mat'), 'coordinates');
+elseif strcmp(dataset, 'House/frame%08d.png')
+    save(strcat(pwd, '/a2/output/house.mat'), 'coordinates');
+else
+    error('This should not have happened');
+end
 
 imshow(pointView)
