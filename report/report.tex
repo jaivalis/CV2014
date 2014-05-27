@@ -73,6 +73,17 @@ Finaly, this algorithm is not robust to occlusions. Therefore it requires a very
 
 \section{Assignment 3}
 
+\subsection{Building 3D Model}
+For this task we were given the pointcloud that was extracted using Kinect \cite{noInternetInFuckingIstanbulAirportFuckIfIKnow}. In order to convert the pointcloud in a printable 3D model we had to follow some steps that would convert points into printable surfaces. The standard procedure for this procedure are as follows:
+\begin{enumerate}
+\item Building a mesh using triangulation using the 3D points
+\item Repairing the 3D model by fixing the holes
+\end{enumerate}
+To aid us in this task we advised the manual of MeshLab \cite{noInternetInFuckingIstanbulAirportFuckIfIKnow} an opensource processing and editing tool for 3D triangular printable mesh data.\\
+Before getting to that point however, we had to convert the raw \texttt{.pcd} file into a format parsable from MeshLab. This task was easily completed using a \texttt{C++} library for point clouds, namely PCL \cite{TODO}.\\
+The output of this process can be seen in the images of Table \ref{modelTable}.
+%TODO: add meshlab output table
+
 \section{Conclusion}
 
 \section{References}
