@@ -2,8 +2,11 @@ clear all;
 addpath('kdtree')
 
 % params
+SampleTypes ={'uniform', 'random', 'none'};
+
+
 neighbors  = 1;
-type       = 'random';
+type       = SampleTypes{2};
 sampleSize = 10000;
 stepSize   = 1;
 % \params
