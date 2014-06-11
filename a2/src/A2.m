@@ -5,7 +5,7 @@ addpath('../a1/kdtree')
 EPTypes    = {'EP', 'nEP', 'nEPRansac'};
 Datasets   = {'TeddyBear/obj02_%03d.png', 'House/frame%08d.png'};
 
-dataset    = Datasets{1};
+dataset    = Datasets{2};
 EPType     = EPTypes(3);
 sampleSize = 8;
 plotF      = false;
@@ -106,9 +106,11 @@ pointView(1:2:end, :)  = [];
 
 %% Save the pointView to file
 if strcmp(dataset, 'TeddyBear/obj02_%03d.png')
-    save(strcat(pwd, '/a2/output/teddy.mat'), 'coordinates');
+    save(strcat(pwd, '\a2\output\teddy.mat'), 'coordinates');
+    save(strcat(pwd, '\a2\output\teddyPV.mat'), 'pointView');
 elseif strcmp(dataset, 'House/frame%08d.png')
-    save(strcat(pwd, '/a2/output/house.mat'), 'coordinates');
+    save(strcat(pwd, '\a2\output\house.mat'), 'coordinates');
+    save(strcat(pwd, '\a2\output\housePV.mat'), 'pointView');
 else
     error('This should not have happened');
 end
