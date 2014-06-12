@@ -1,34 +1,39 @@
 function [F, sampl] = normalizedEPRansac(P1, P2, matches)
 %NORMALIZEDEPRANSAC See Section 1.3
     
-    most_inliers = 0;
+    most_inliers = [];
+    F = [];
+    sampl = [];
     improvementSteps = 0;
     
-    while most_inliers < size(matches, 2) / 6
+    loopcount = 0;
+    while loopcount < 1001
+        loopcount = loopcount + 1;
         matchesSample = matches(:, randi(size(matches,2),1,8));
         
+%         F_candidate = eightPoint(P1, P2, matchesSample);
         F_candidate = normalizedEP(P1, P2, matchesSample);
-        inliers = 0;
         
-        limit = min(size(P1, 2), size(P2, 2));
-        for i = 1:limit
-            p1 = P1(1:2, i);
-            p2 = P2(1:2, i);
-            
-            d = sampsonDistance(p1, p2, F_candidate);
-            if d < 200
-                inliers = inliers + 1;
-            end
+        P1_ = P1(1:2, matches(1,:));
+        P2_ = P2(1:2, matches(2,:));
+        % verify matchesSample are in matches and stuff like that
+        
+        P1_ = [P1_;  ones(1, size(matches, 2))];
+        P2_ = [P2_;  ones(1, size(matches, 2))];
+
+        d = sampsonDistance(P1_, P2_, F_candidate);
+        inliers = find(abs(d) < .5);     % Indices of inlying points
+        
+        if size(inliers, 2) == 0
+            continue
         end
-        
-        if inliers > most_inliers
+        if size(inliers, 2) > size(most_inliers, 2)
             F                = F_candidate;
             most_inliers     = inliers;
-            improvementSteps = improvementSteps + 1;
+            improvementSteps = improvementSteps + 1
             sampl            = matchesSample;
         end
-        
     end
-    
+    disp (strcat('(Ransac:) Inliers:_', num2str(size(most_inliers, 2)), ...
+        '_outliers:_', num2str(size(matches, 2) - size(most_inliers, 2))))
 end
-

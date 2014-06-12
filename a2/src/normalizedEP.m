@@ -10,6 +10,6 @@ function F = normalizedEP(points1, points2, matches)
     
     % denormalize
     % 1.2.3 we're assuming that the F' is a typo
-    F = T2' * F * T1;
+    F = T2' * F' * T1;
 end
 

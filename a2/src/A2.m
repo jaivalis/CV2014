@@ -28,6 +28,8 @@ for i = 1 : lim
     end
 
     %sample interest points for non background points
+%     [i_points1, d1] = vl_sift(i1);%getForegroundSift(i1);
+%     [i_points2, d2] = vl_sift(i2);%getForegroundSift(i2);
     [i_points1, d1] = getForegroundSift(i1);
     [i_points2, d2] = getForegroundSift(i2);
 
@@ -106,11 +108,11 @@ pointView(1:2:end, :)  = [];
 
 %% Save the pointView to file
 if strcmp(dataset, 'TeddyBear/obj02_%03d.png')
-    save(strcat(pwd, '\a2\output\teddy.mat'), 'coordinates');
-    save(strcat(pwd, '\a2\output\teddyPV.mat'), 'pointView');
+    save(strcat(pwd, '/a2/output/teddy.mat'), 'coordinates');
+    save(strcat(pwd, '/a2/output/teddyPV.mat'), 'pointView');
 elseif strcmp(dataset, 'House/frame%08d.png')
-    save(strcat(pwd, '\a2\output\house.mat'), 'coordinates');
-    save(strcat(pwd, '\a2\output\housePV.mat'), 'pointView');
+    save(strcat(pwd, '/a2/output/house.mat'), 'coordinates');
+    save(strcat(pwd, '/a2/output/housePV.mat'), 'pointView');
 else
     error('This should not have happened');
 end

@@ -1,8 +1,25 @@
 clear all
-mat_ = load('a2/output/house.mat');
-D = mat_.coordinates;
-mat_ = load('a2/output/housePV.mat');
-PV = mat_.pointView;
+
+% params
+Datasets   = {'TeddyBear', 'House'};
+
+dataset    = Datasets{2};
+sampleSize = 8;
+plotF      = false;
+% \params
+
+if strcmp(dataset, 'TeddyBear') == 1
+    mat_ = load('a2/output/teddy.mat');
+    D = mat_.coordinates;
+    mat_ = load('a2/output/teddyPV.mat');
+    PV = mat_.pointView;
+elseif strcmp(dataset, 'House') == 1
+    mat_ = load('a2/output/house.mat');
+    D = mat_.coordinates;
+    mat_ = load('a2/output/housePV.mat');
+    PV = mat_.pointView;
+end
+
 % TODO: Deal with missing data
 for i = 1 : size(PV, 2)
     a(i) = sum(PV(:,i));

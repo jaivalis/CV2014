@@ -5,13 +5,13 @@ function F = eightPoint(i_points1, i_points2, matches)
     
     % single Value Decomp. of A
     [~, ~, V] = svd(A);%Find the SVD of A: A = UDV T
-    % The entries of F are the components of the column of V corresponding to the smallest singular value. 
+    % The entries of F are the components of the column of V corresponding 
+    % to the smallest singular value. 
     [~, f_ind] = find(V == min(min(V)));
     
-    F      = V(:, f_ind);  
-    [F, ~] = vec2mat(F, 3);%change F to matrix
-    
-    F = F'; %get the matrix transposed to set values to original F
+    F      = V(:, f_ind);
+    F = reshape(F, 3, 3);%change F to matrix
+   
     % single Value Decomp. of F
     [U_f, D_f, V_f] = svd(F); %Find the SVD of F: F = UfDfVf^T
     
