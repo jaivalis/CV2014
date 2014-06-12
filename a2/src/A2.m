@@ -69,6 +69,7 @@ for i = 1 : lim
     % other image contains that point, mark this matching on your point-view
     % matrix using the previously defined point column. Do not introduce a new
     % column.
+    matches = matches(:, sampl);
     if isempty(pointView)
         % first iteration
         pointView   = zeros(2*lim, size(matches,2));
