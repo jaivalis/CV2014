@@ -2,7 +2,7 @@ clear all;
 addpath('kdtree')
 
 % params
-sampleTypes = {'uniform', 'random', 'none'};
+sampleTypes = {'uniformRandom', 'uniformRandomNormal', 'none'};
 
 
 neighbors  = 1;
@@ -11,6 +11,8 @@ sampleSize = 10000;
 stepSize   = 1;
 % \params
 figure;
+hold on;
+
 base   = getPcd( 0, type, sampleSize );
 for image = 1:stepSize:99
     disp(strcat('Image pair: [', num2str(image-1), ',', num2str(image), ']'))
@@ -106,6 +108,8 @@ for image = 1:stepSize:99
     
     % merge base and target
     base = merge(base, target, idxs);
+    
+    save('backup')
     
 end
 hold off
