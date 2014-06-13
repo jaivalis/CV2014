@@ -61,7 +61,7 @@ for image = 1:stepSize:99
         R = eye(3,3);
 
         %% Phase 4 finding out translation and rotation based on SVD result
-        R = U * V';
+        R = V * U;
 
         % calculate translation matrix T (1 x 3)
         B_c = mu_base;
@@ -85,7 +85,7 @@ for image = 1:stepSize:99
                     ' Difference:', num2str(abs(prev_RMS - RMS))));
 
         % Loop until RMS remains unchanged
-        if abs(prev_RMS - RMS) < 0.0012
+        if abs(prev_RMS - RMS) < 0.0012 && RMS < 0.4
             break;
         end
     end
