@@ -1,7 +1,8 @@
-function [t, R] = ICP_(target, base)
+function [t, R, idxs] = ICP_(target, base)
 % ICP_ Performs the ICP algorithm for two pointclouds
     t = zeros(3,1);
     R = eye(3,3);
+    idxs = [];
 
     rms        = 1000;
     iterations = 1;
@@ -16,7 +17,7 @@ function [t, R] = ICP_(target, base)
 
         % get matches between the transformed base and the target
         tic
-        matches = getMatchingPoints(base_prime, target);
+        [matches, idxs] = getMatchingPoints(base_prime, target);
         toc
 
         % get transformation through SVD
