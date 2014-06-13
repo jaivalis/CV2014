@@ -12,7 +12,7 @@ function pcd = getPcd( id, type, sampleSize )
         % base with only x,y,z values
         pcd   = pcd(:, 1:3);
         
-    elseif strcmp(type, 'uniform')
+    elseif strcmp(type, 'uniformRandom')
         pcd   = readPcd( filename );
         % filter out z-values greater than 2
         index = (pcd(:, 3) < 2);
@@ -22,7 +22,7 @@ function pcd = getPcd( id, type, sampleSize )
         sampleIDs = randsample(1:size(pcd, 1), sampleSize);
         pcd   = pcd(sampleIDs, :);
         
-    elseif strcmp(type, 'random')
+    elseif strcmp(type, 'uniformRandomNormal')
         filename = sprintf('data/%010d_normal.pcd', id);
         pcd   = readPcd( filename );
         % filter out z-values greater than 2
@@ -30,7 +30,7 @@ function pcd = getPcd( id, type, sampleSize )
         pcd   = pcd(index, :);
         % base with only x,y,z values
         pcd   = pcd(:,1:3);
-        sampleIDs = datasample(1:size(pcd, 1), sampleSize);
+        sampleIDs = randsample(1:size(pcd, 1), sampleSize);
         
         pcd   = pcd(sampleIDs, :);
     else

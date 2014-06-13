@@ -1,4 +1,4 @@
-function [ T, R, RMS, idxs ]=ICP_( im1, im2, type, samples, neighbors )
+function [ T, R, RMS, idxs, target ]=ICP_( im1, im2, type, samples, neighbors )
 
 disp(strcat('Image pair: [', num2str(im1), ',', num2str(im2), ']'))
 
