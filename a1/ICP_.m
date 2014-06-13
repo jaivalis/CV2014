@@ -13,13 +13,14 @@ function [t, R] = ICP_(target, base)
         % transform base by previous rotation and translation
         base_prime = R * base + repmat(t, 1, size(base, 2));
 
+
         % get matches between the transformed base and the target
         tic
         matches = getMatchingPoints(base_prime, target);
         toc
 
         % get transformation through SVD
-        [R_temp,t_temp] = getTransformation(matches, base_prime);
+        [R_temp,t_temp] = getTransformationParams(matches, base_prime);        
 
         % refine rotation and translation
         R = R_temp * R;
@@ -35,23 +36,4 @@ function [t, R] = ICP_(target, base)
             break;
         end
     end
-end
-
-
-function [R,t] = getTransformation(target,base)
-% get mean from base and mean from target, correct
-mu_base = mean(base, 2);
-base_new = base - repmat(mu_base, 1, size(base, 2));
-mu_target = mean(target, 2);
-target_new = target - repmat(mu_target, 1, size(target, 2));
-
-% compute A
-A = base_new*target_new';
-
-% perform SVD
-[U,~,V] = svd(A);
-
-% return R and t
-R = V*U';
-t = mu_target - R*mu_base;
 end
