@@ -3,7 +3,7 @@ function [t, R] = ICP_(target, base)
     t = zeros(3,1);
     R = eye(3,3);
 
-    rms = 1000;
+    rms        = 1000;
     iterations = 1;
     
     while 1
@@ -27,10 +27,11 @@ function [t, R] = ICP_(target, base)
 
         rms = calculateRMS(matches, base_prime);
         
+        % end loop
         disp(strcat('__RMS:', num2str(rms), ' prevRMS:', num2str(prev_rms), ...
                         ' Difference:', num2str(abs(prev_rms - rms))));
         iterations = iterations + 1;
-        if abs(prev_rms - rms) < 0.0012
+        if abs(prev_rms - rms) < .0012
             break;
         end
     end
