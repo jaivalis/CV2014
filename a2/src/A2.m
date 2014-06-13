@@ -8,7 +8,7 @@ Datasets   = {'TeddyBear/obj02_%03d.png', 'House/frame%08d.png'};
 dataset    = Datasets{2};
 EPType     = EPTypes(3);
 sampleSize = 8;
-plotF      = false;
+plotF      = 1;
 % \params
 
 pointView   = []; % images x points
@@ -20,6 +20,7 @@ if strcmp(dataset, 'House/frame%08d.png')
     lim = 49;
 end
 for i = 1 : lim
+    i
     i1 = readImage(dataset, i);
     if i == lim
         i2 = readImage(dataset, 1);
@@ -41,16 +42,18 @@ for i = 1 : lim
     
     %% Plot matches
     if plotF
+        clear originPoints
+        clear destinationPoints
         concat = cat(2, i1, i2); concat = concat / 255;
         figure;  imshow(concat, 'InitialMagnification', 20);
         hold on
         % connecting line between original and transformed points
-        originPoints(:, 1) = i_points1( 1, sampl(1, :) ); % x coordinate
-        originPoints(:, 2) = i_points1( 2, sampl(1, :) ); % y coordinate
+        originPoints(:, 1) = i_points1( 1, matches(1, :) ); % x coordinate
+        originPoints(:, 2) = i_points1( 2, matches(1, :) ); % y coordinate
 
         %destinationPoints = i_points2;
-        destinationPoints(:, 1) = i_points2( 1, sampl(2, :) ); % x coordinate
-        destinationPoints(:, 2) = i_points2( 2, sampl(2, :) ); % y coordinate
+        destinationPoints(:, 1) = i_points2( 1, matches(2, :) ); % x coordinate
+        destinationPoints(:, 2) = i_points2( 2, matches(2, :) ); % y coordinate
         destinationPoints(:, 1) = destinationPoints(:, 1) + size(i1,2); % plus width
 
         plot(originPoints(:, 1), originPoints(:, 2), 'ro');
@@ -69,6 +72,7 @@ for i = 1 : lim
     % other image contains that point, mark this matching on your point-view
     % matrix using the previously defined point column. Do not introduce a new
     % column.
+    matches = matches(:, sampl);
     if isempty(pointView)
         % first iteration
         pointView   = zeros(2*lim, size(matches,2));
